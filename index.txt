@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V-sit Twist Rep Checker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a1814;
+    --surface: #12241e;
+    --border: #28473a;
+    --accent: #34d399;      /* emerald */
+    --accent2: #a7f3d0;     /* mint */
+    --text: #ecfdf5;
+    --muted: #6b8e7e;
+    --good: #22c55e;
+    --warn: #fbbf24;
+    --bad: #ef4444;
+    --left: #38bdf8;        /* sky blue */
+    --right: #f472b6;       /* pink */
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Do Hyeon', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .page { display: none; min-height: 100vh; flex-direction: column; }
+  .page.active { display: flex; }
+
+  .landing-header {
+    padding: 24px 40px;
+    display: flex; align-items: baseline; gap: 16px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .logo { font-size: 28px; letter-spacing: 0.06em; color: var(--accent); }
+  .subtitle { font-size: 14px; color: var(--muted); }
+
+  .landing-hero {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; padding: 48px 24px; text-align: center; gap: 24px;
+  }
+
+  .hero-tag {
+    font-size: 13px; letter-spacing: 0.12em; color: var(--accent);
+    border: 0.5px solid var(--accent); padding: 4px 14px; border-radius: 2px;
+  }
+
+  .hero-title {
+    font-size: clamp(48px, 10vw, 96px);
+    line-height: 0.98; letter-spacing: 0.03em;
+  }
+
+  .hero-title span { color: var(--accent); }
+
+  .hero-tagline {
+    font-size: 18px; color: var(--accent);
+    border: 0.5px solid var(--border); background: var(--surface);
+    padding: 10px 24px; border-radius: 4px; width: 100%; max-width: 680px;
+  }
+
+  .criteria-card {
+    width: 100%; max-width: 680px;
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 8px; padding: 24px; text-align: left;
+  }
+
+  .criteria-title { font-size: 36px; color: var(--accent); margin-bottom: 20px; text-align: center; }
+
+  .criteria-rules { display: flex; flex-direction: column; gap: 16px; }
+  .criteria-rule { display: flex; align-items: flex-start; gap: 16px; }
+
+  .rule-badge {
+    font-size: 16px; padding: 5px 14px; border-radius: 3px;
+    white-space: nowrap; flex-shrink: 0; margin-top: 2px;
+  }
+
+  .rule-badge.rep   { background: var(--good); color: #001a08; }
+  .rule-badge.norep { background: var(--bad);  color: #fff; }
+  .rule-badge.left  { background: var(--left); color: #001a2e; }
+  .rule-badge.right { background: var(--right); color: #2e001a; }
+
+  .rule-text { font-size: 15px; color: var(--muted); line-height: 1.8; }
+  .rule-text strong { color: var(--text); font-weight: 400; }
+
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; width: 100%; max-width: 680px;
+  }
+
+  .feature-card {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 4px; padding: 20px 16px; text-align: left;
+  }
+
+  .feature-num { font-size: 36px; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+  .feature-title { font-size: 17px; color: var(--text); margin-bottom: 8px; }
+  .feature-desc { font-size: 12px; color: var(--muted); line-height: 1.7; }
+
+  .how-section {
+    width: 100%; max-width: 680px;
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 4px; padding: 24px; text-align: left;
+  }
+
+  .how-title { font-size: 36px; color: var(--accent); margin-bottom: 20px; }
+
+  .how-step {
+    display: flex; gap: 14px;
+    font-size: 15px; color: var(--muted); line-height: 1.8; margin-bottom: 14px;
+  }
+
+  .how-step:last-child { margin-bottom: 0; }
+  .how-num { font-size: 24px; color: var(--accent); line-height: 1.2; min-width: 18px; }
+
+  .btn-start {
+    width: 100%; max-width: 680px; padding: 20px;
+    background: var(--accent); border: none; border-radius: 4px;
+    color: #062b18;
+    font-family: 'Do Hyeon', sans-serif;
+    font-size: 24px; letter-spacing: 0.06em;
+    cursor: pointer; transition: background 0.15s, transform 0.1s;
+  }
+
+  .btn-start:hover { background: #6ee7b7; transform: scale(1.01); }
+  .btn-start:active { transform: scale(0.99); }
+
+  .cam-header {
+    padding: 16px 24px; display: flex;
+    align-items: center; justify-content: space-between;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .back-btn {
+    background: transparent; border: 0.5px solid var(--border);
+    border-radius: 4px; color: var(--muted);
+    font-family: 'Do Hyeon', sans-serif;
+    font-size: 14px; padding: 6px 14px; cursor: pointer; transition: all 0.15s;
+  }
+
+  .back-btn:hover { border-color: var(--text); color: var(--text); }
+
+  .cam-main {
+    width: 100%; max-width: 960px; margin: 0 auto;
+    padding: 20px 16px; display: flex; flex-direction: column; gap: 16px;
+  }
+
+  .camera-section {
+    position: relative; width: 100%; aspect-ratio: 4/3;
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 4px; overflow: hidden;
+  }
+
+  #videoEl { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+  #canvasEl { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .rep-flash {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 5;
+  }
+
+  .rep-flash.show { opacity: 1; }
+
+  .rep-flash-text {
+    font-family: 'Do Hyeon', sans-serif;
+    font-size: 80px; letter-spacing: 0.04em;
+    text-shadow: 0 0 30px rgba(0,0,0,0.5);
+  }
+
+  .overlay-status {
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+    background: rgba(10,24,20,0.82); backdrop-filter: blur(6px);
+    border: 0.5px solid var(--border); border-radius: 2px;
+    padding: 8px 20px; font-size: 15px; color: var(--muted);
+    white-space: nowrap; transition: all 0.2s; z-index: 4;
+  }
+
+  .overlay-status.good { color: var(--good); border-color: var(--good); }
+  .overlay-status.warn { color: var(--warn); border-color: var(--warn); }
+  .overlay-status.left { color: var(--left); border-color: var(--left); }
+  .overlay-status.right { color: var(--right); border-color: var(--right); }
+
+  .feedback-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 14px 20px 38px;
+    background: linear-gradient(transparent, rgba(10,24,20,0.9));
+    display: flex; align-items: center; justify-content: space-between; z-index: 4;
+  }
+
+  .feedback-text { font-size: 40px; letter-spacing: 0.04em; transition: color 0.2s; }
+
+  .angle-display { font-size: 14px; color: var(--muted); text-align: right; line-height: 1.7; }
+  .angle-display span { color: var(--text); }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .stat-card {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 4px; padding: 14px 12px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+
+  .stat-label { font-size: 16px; color: var(--muted); letter-spacing: 0.04em; }
+
+  .stat-value {
+    font-size: 56px; line-height: 1; color: var(--accent); transition: color 0.3s;
+  }
+
+  .stat-value.flash { animation: flash 0.4s ease; }
+
+  @keyframes flash {
+    0%   { color: var(--good); transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  .stat-sub { font-size: 11px; color: var(--muted); }
+
+  .btn {
+    width: 100%; padding: 18px 20px; background: transparent;
+    border: 0.5px solid var(--border); border-radius: 4px;
+    color: var(--muted);
+    font-family: 'Do Hyeon', sans-serif;
+    font-size: 22px; letter-spacing: 0.06em;
+    cursor: pointer; transition: all 0.15s;
+  }
+
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .loading-overlay {
+    position: absolute; inset: 0; background: var(--surface);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px; z-index: 10;
+  }
+
+  .loading-text { font-size: 15px; color: var(--muted); }
+
+  .spinner {
+    width: 32px; height: 32px;
+    border: 1.5px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* 우측 상단 사이드 인디케이터 */
+  .side-indicator {
+    position: absolute; top: 16px; right: 16px;
+    background: rgba(10,24,20,0.82); border: 0.5px solid var(--border);
+    border-radius: 2px; padding: 6px 14px; font-size: 13px; color: var(--muted); z-index: 4;
+  }
+
+  /* 좌측 상단: 브이싯 타이머 */
+  .time-panel {
+    position: absolute; top: 16px; left: 16px;
+    background: rgba(10,24,20,0.82); border: 0.5px solid var(--border);
+    border-radius: 4px; padding: 8px 14px; z-index: 4;
+    min-width: 110px;
+  }
+  .time-label { font-size: 10px; color: var(--muted); letter-spacing: 0.12em; }
+  .time-value { font-size: 28px; color: var(--accent); line-height: 1.1; transition: color 0.2s; }
+  .time-value.live { color: var(--good); }
+  .time-best { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .time-best span { color: var(--accent2); }
+
+  /* 하단 수평 포지션 바 */
+  .pos-bar-wrap {
+    position: absolute; bottom: 6px; left: 20px; right: 20px;
+    height: 6px; z-index: 4; pointer-events: none;
+  }
+  .pos-bar-track {
+    position: relative;
+    width: 100%; height: 100%;
+    background: var(--border); border-radius: 3px;
+  }
+  .pos-bar-center {
+    position: absolute; left: 50%; top: -3px;
+    width: 1px; height: 12px; background: var(--muted);
+  }
+  .pos-bar-left-zone, .pos-bar-right-zone {
+    position: absolute; top: 0; height: 100%; opacity: 0.2;
+  }
+  .pos-bar-left-zone  { left: 0;  width: 38%; background: var(--left); }
+  .pos-bar-right-zone { right: 0; width: 38%; background: var(--right); }
+  .pos-bar-dot {
+    position: absolute; top: -3px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--accent); transform: translateX(-50%);
+    transition: left 0.08s, background 0.2s;
+    box-shadow: 0 0 8px rgba(52,211,153,0.7);
+  }
+
+  @media (max-width: 400px) {
+    .stat-value { font-size: 44px; }
+    .stat-label { font-size: 13px; }
+    .time-value { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ LANDING PAGE ══ -->
+<div class="page active" id="landingPage">
+  <header class="landing-header">
+    <div class="logo">V-sit Twist Rep Checker</div>
+    <div class="subtitle">Yuga Middle School</div>
+  </header>
+
+  <div class="landing-hero">
+    <div class="hero-tag">AI 자세 분석</div>
+    <div class="hero-title">V-SIT<br><span>TWIST</span><br>CHECKER</div>
+    <div class="hero-tagline">발 든 채 좌·우 바닥 터치마다 +1!</div>
+
+    <div class="criteria-card">
+      <div class="criteria-title">판정 기준</div>
+      <div class="criteria-rules">
+        <div class="criteria-rule">
+          <div class="rule-badge left">LEFT</div>
+          <div class="rule-text">
+            <strong>발을 든 상태</strong>에서 공이 <strong>왼쪽 바닥</strong>에 닿음<br>
+            <span style="color:var(--text)">→ 왼쪽 터치 +1</span>
+          </div>
+        </div>
+        <div class="criteria-rule">
+          <div class="rule-badge right">RIGHT</div>
+          <div class="rule-text">
+            <strong>발을 든 상태</strong>에서 공이 <strong>오른쪽 바닥</strong>에 닿음<br>
+            <span style="color:var(--text)">→ 오른쪽 터치 +1</span>
+          </div>
+        </div>
+        <div class="criteria-rule">
+          <div class="rule-badge rep">REP</div>
+          <div class="rule-text">
+            <strong>발이 들려있는 상태</strong>에서 공이 <strong>바닥에 닿으면 REP</strong><br>
+            <span style="color:var(--text)">→ 좌·우 각 터치 1개씩 카운트</span>
+          </div>
+        </div>
+        <div class="criteria-rule">
+          <div class="rule-badge norep">NO REP</div>
+          <div class="rule-text">
+            발이 바닥에 닿은 채 터치하거나, 중앙을 지나지 않고 같은 쪽을 또 찍은 경우<br>
+            <span style="color:var(--text)">→ 카운트되지 않음</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-num">01</div>
+        <div class="feature-title">발 들림 감지</div>
+        <div class="feature-desc">엉덩이보다 발이 위에 있어야 브이싯 인정해요</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">02</div>
+        <div class="feature-title">좌우 자동 카운트</div>
+        <div class="feature-desc">양손 중점을 추적해서 좌·우 터치를 분리해 세요</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">03</div>
+        <div class="feature-title">유지 시간 타이머</div>
+        <div class="feature-desc">브이싯을 유지한 시간과 최고 기록을 함께 보여줘요</div>
+      </div>
+    </div>
+
+    <div class="how-section">
+      <div class="how-title">사용 방법</div>
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <div>카메라 시작 버튼을 누르고 카메라 권한을 허용해주세요</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <div>카메라가 <span style="color:var(--accent)">정면에서</span> 몸을 비추도록 두고 브이싯 자세를 잡아주세요</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <div>농구공을 <span style="color:var(--accent)">양손으로 꽉 잡고</span> 좌·우로 몸통을 돌려 바닥을 터치해요</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">4</div>
+        <div>반대쪽을 찍으려면 <span style="color:var(--accent2)">반드시 중앙을 거쳐야</span> 다음 카운트가 인정돼요</div>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="goToCamera()">카메라 시작하기 →</button>
+  </div>
+</div>
+
+<!-- ══ CAMERA PAGE ══ -->
+<div class="page" id="cameraPage">
+  <div class="cam-header">
+    <div class="logo" style="font-size:22px">V-sit Twist Rep Checker</div>
+    <button class="back-btn" onclick="goToLanding()">← 뒤로</button>
+  </div>
+
+  <div class="cam-main">
+    <div class="camera-section">
+      <video id="videoEl" playsinline></video>
+      <canvas id="canvasEl"></canvas>
+
+      <div class="rep-flash" id="repFlash">
+        <div class="rep-flash-text" id="repFlashText">+1</div>
+      </div>
+
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">AI 모델 로딩 중...</div>
+      </div>
+
+      <div class="overlay-status" id="statusLabel">카메라 시작 중...</div>
+
+      <div class="time-panel">
+        <div class="time-label">V-SIT HOLD</div>
+        <div class="time-value" id="timeValue">00:00</div>
+        <div class="time-best">BEST <span id="timeBest">00:00</span></div>
+      </div>
+
+      <div class="side-indicator" id="sideLabel">감지 대기 중</div>
+
+      <div class="feedback-bar">
+        <div class="feedback-text" id="feedbackText" style="color:var(--muted)">준비</div>
+        <div class="angle-display">
+          손 위치 <span id="handPos">—</span><br>
+          발 <span id="feetState">—</span>
+        </div>
+      </div>
+
+      <div class="pos-bar-wrap">
+        <div class="pos-bar-track">
+          <div class="pos-bar-left-zone"></div>
+          <div class="pos-bar-right-zone"></div>
+          <div class="pos-bar-center"></div>
+          <div class="pos-bar-dot" id="posDot" style="left:50%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">총 횟수</div>
+        <div class="stat-value" id="totalCount">0</div>
+        <div class="stat-sub">왼쪽 + 오른쪽</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">왼쪽</div>
+        <div class="stat-value" id="leftCount" style="color:var(--left)">0</div>
+        <div class="stat-sub">왼쪽 바닥 터치</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">오른쪽</div>
+        <div class="stat-value" id="rightCount" style="color:var(--right)">0</div>
+        <div class="stat-sub">오른쪽 바닥 터치</div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="resetStats()">횟수 초기화</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+
+<script>
+const videoEl      = document.getElementById('videoEl');
+const canvasEl     = document.getElementById('canvasEl');
+const ctx          = canvasEl.getContext('2d');
+const loadingEl    = document.getElementById('loadingOverlay');
+const statusEl     = document.getElementById('statusLabel');
+const sideEl       = document.getElementById('sideLabel');
+const feedbackEl   = document.getElementById('feedbackText');
+const handPosEl    = document.getElementById('handPos');
+const feetStateEl  = document.getElementById('feetState');
+const totalCountEl = document.getElementById('totalCount');
+const leftCountEl  = document.getElementById('leftCount');
+const rightCountEl = document.getElementById('rightCount');
+const timeValueEl  = document.getElementById('timeValue');
+const timeBestEl   = document.getElementById('timeBest');
+const posDotEl     = document.getElementById('posDot');
+const repFlashEl   = document.getElementById('repFlash');
+const repFlashText = document.getElementById('repFlashText');
+
+// ═════ Tunable thresholds ═════
+const FEET_LIFT_GAP    = 0.030; // ankleY < hipY - this → 발 들림
+const HAND_FLOOR_GAP   = 0.060; // |handMidY - hipMidY| < this → 바닥 근처
+const SIDE_THRESHOLD   = 0.120; // |handMidX - hipMidX| > this → 한쪽으로 충분히 벗어남
+const CENTER_THRESHOLD = 0.060; // |handMidX - hipMidX| < this → 중앙 복귀
+// 포지션 바 디스플레이 스케일 (정규화 X 기준 ±0.25 → 바 양끝)
+const POS_BAR_SCALE    = 0.25;
+
+let leftCount = 0, rightCount = 0;
+let phase = 'center';   // 'center' | 'left' | 'right'
+let cameraStarted = false;
+let flashTimeout = null;
+
+// V-sit timer
+let vsitStartMs = null;     // 현재 브이싯 시작 시각
+let vsitBestMs  = 0;        // 최고 유지 시간
+let lastVSitActive = false;
+
+function goToCamera() {
+  document.getElementById('landingPage').classList.remove('active');
+  document.getElementById('cameraPage').classList.add('active');
+  if (!cameraStarted) startCamera();
+}
+
+function goToLanding() {
+  document.getElementById('cameraPage').classList.remove('active');
+  document.getElementById('landingPage').classList.add('active');
+}
+
+function fmtMs(ms) {
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+}
+
+function flashEl(el) {
+  el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+}
+
+function showFlash(type) {
+  if (flashTimeout) clearTimeout(flashTimeout);
+  if (type === 'left') {
+    repFlashEl.style.background = 'rgba(56,189,248,0.22)';
+    repFlashText.textContent = 'LEFT +1';
+    repFlashText.style.color = '#38bdf8';
+  } else if (type === 'right') {
+    repFlashEl.style.background = 'rgba(244,114,182,0.22)';
+    repFlashText.textContent = 'RIGHT +1';
+    repFlashText.style.color = '#f472b6';
+  } else {
+    repFlashEl.style.background = 'rgba(255,23,68,0.22)';
+    repFlashText.textContent = 'NO REP';
+    repFlashText.style.color = '#ff1744';
+  }
+  repFlashEl.classList.add('show');
+  flashTimeout = setTimeout(() => repFlashEl.classList.remove('show'), 700);
+}
+
+function resetStats() {
+  leftCount = 0; rightCount = 0;
+  phase = 'center';
+  totalCountEl.textContent = '0';
+  leftCountEl.textContent  = '0';
+  rightCountEl.textContent = '0';
+  vsitStartMs = null;
+  vsitBestMs = 0;
+  timeValueEl.textContent = '00:00';
+  timeBestEl.textContent = '00:00';
+}
+
+// 정면 감지: 양쪽 엉덩이 x가 서로 떨어져 있고, 어깨도 비슷하게 벌어짐
+function isFacingCamera(lm) {
+  const hipSpread = Math.abs(lm[23].x - lm[24].x);
+  const shSpread  = Math.abs(lm[11].x - lm[12].x);
+  return hipSpread > 0.06 && shSpread > 0.08;
+}
+
+const pose = new Pose({ locateFile: (f) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${f}` });
+pose.setOptions({
+  modelComplexity: 1, smoothLandmarks: true, enableSegmentation: false,
+  minDetectionConfidence: 0.6, minTrackingConfidence: 0.6
+});
+
+pose.onResults((results) => {
+  canvasEl.width  = videoEl.videoWidth  || 640;
+  canvasEl.height = videoEl.videoHeight || 480;
+  ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+  ctx.drawImage(results.image, 0, 0, canvasEl.width, canvasEl.height);
+
+  const now = performance.now();
+
+  if (!results.poseLandmarks) {
+    statusEl.textContent = '사람을 찾는 중...';
+    statusEl.className = 'overlay-status';
+    feedbackEl.textContent = '준비';
+    feedbackEl.style.color = 'var(--muted)';
+    vsitStartMs = null;
+    lastVSitActive = false;
+    return;
+  }
+
+  const lm = results.poseLandmarks;
+  drawConnectors(ctx, lm, POSE_CONNECTIONS, { color: '#28473a', lineWidth: 1.5 });
+  drawLandmarks(ctx, lm, { color: '#34d399', lineWidth: 1, radius: 3 });
+
+  if (!isFacingCamera(lm)) {
+    statusEl.textContent = '정면으로 앉아주세요';
+    statusEl.className = 'overlay-status';
+    feedbackEl.textContent = '준비';
+    feedbackEl.style.color = 'var(--muted)';
+    sideEl.textContent = '정면 감지 중';
+    handPosEl.textContent = '—';
+    feetStateEl.textContent = '—';
+    vsitStartMs = null;
+    lastVSitActive = false;
+    return;
+  }
+
+  // 주요 좌표
+  const hipMidX   = (lm[23].x + lm[24].x) / 2;
+  const hipMidY   = (lm[23].y + lm[24].y) / 2;
+  const handMidX  = (lm[15].x + lm[16].x) / 2;
+  const handMidY  = (lm[15].y + lm[16].y) / 2;
+  const ankleMidY = (lm[27].y + lm[28].y) / 2;
+
+  // 발 들림 검사
+  const feetLifted = ankleMidY < hipMidY - FEET_LIFT_GAP;
+  feetStateEl.textContent = feetLifted ? '들림 ✓' : '바닥';
+
+  // 브이싯 타이머
+  if (feetLifted) {
+    if (vsitStartMs === null) vsitStartMs = now;
+    const elapsed = now - vsitStartMs;
+    timeValueEl.textContent = fmtMs(elapsed);
+    timeValueEl.classList.add('live');
+    if (elapsed > vsitBestMs) {
+      vsitBestMs = elapsed;
+      timeBestEl.textContent = fmtMs(vsitBestMs);
+    }
+    lastVSitActive = true;
+  } else {
+    if (lastVSitActive && vsitStartMs !== null) {
+      // 방금 끝남 → 최종 시간 비교
+      const elapsed = now - vsitStartMs;
+      if (elapsed > vsitBestMs) {
+        vsitBestMs = elapsed;
+        timeBestEl.textContent = fmtMs(vsitBestMs);
+      }
+    }
+    vsitStartMs = null;
+    timeValueEl.textContent = '00:00';
+    timeValueEl.classList.remove('live');
+    lastVSitActive = false;
+  }
+
+  // 손 중점 좌표 분석
+  const offsetX   = handMidX - hipMidX;               // (+) → 화면 오른쪽, (-) → 화면 왼쪽
+  const handYGap  = handMidY - hipMidY;               // (+) → 엉덩이보다 아래 = 바닥 근처
+  const atFloor   = Math.abs(handYGap) < HAND_FLOOR_GAP;
+
+  handPosEl.textContent = offsetX.toFixed(2);
+
+  // 포지션 바 dot 위치 (퍼센트)
+  const clamped = Math.max(-POS_BAR_SCALE, Math.min(POS_BAR_SCALE, offsetX));
+  const pctPos  = (clamped + POS_BAR_SCALE) / (POS_BAR_SCALE * 2) * 100;
+  posDotEl.style.left = pctPos + '%';
+  posDotEl.style.background =
+      offsetX < -SIDE_THRESHOLD ? 'var(--left)' :
+      offsetX >  SIDE_THRESHOLD ? 'var(--right)' :
+      'var(--accent)';
+
+  // ═ 터치 판정 (반드시 feet lifted & atFloor 조건 만족) ═
+  const leftTouch  = feetLifted && atFloor && offsetX < -SIDE_THRESHOLD;
+  const rightTouch = feetLifted && atFloor && offsetX >  SIDE_THRESHOLD;
+  const atCenter   = Math.abs(offsetX) < CENTER_THRESHOLD;
+
+  // 사이드 표시 & 피드백
+  if (!feetLifted) {
+    statusEl.textContent = '발을 드세요! (브이싯 자세)';
+    statusEl.className = 'overlay-status warn';
+    feedbackEl.textContent = 'LIFT FEET';
+    feedbackEl.style.color = 'var(--warn)';
+    sideEl.textContent = '발 내려감';
+  } else if (leftTouch) {
+    statusEl.textContent = '왼쪽 바닥 터치!';
+    statusEl.className = 'overlay-status left';
+    feedbackEl.textContent = 'LEFT TOUCH!';
+    feedbackEl.style.color = 'var(--left)';
+    sideEl.textContent = '← 왼쪽 터치';
+  } else if (rightTouch) {
+    statusEl.textContent = '오른쪽 바닥 터치!';
+    statusEl.className = 'overlay-status right';
+    feedbackEl.textContent = 'RIGHT TOUCH!';
+    feedbackEl.style.color = 'var(--right)';
+    sideEl.textContent = '오른쪽 터치 →';
+  } else if (atCenter) {
+    statusEl.textContent = '중앙 — 다음 방향으로 이동하세요';
+    statusEl.className = 'overlay-status';
+    feedbackEl.textContent = 'CENTER';
+    feedbackEl.style.color = 'var(--text)';
+    sideEl.textContent = '중앙';
+  } else {
+    statusEl.textContent = '트위스트 중...';
+    statusEl.className = 'overlay-status good';
+    feedbackEl.textContent = 'TWIST';
+    feedbackEl.style.color = 'var(--accent)';
+    sideEl.textContent = offsetX < 0 ? '← 왼쪽 이동' : '오른쪽 이동 →';
+  }
+
+  // ═ State machine: 중앙을 거쳐야 반대편 카운트 허용 ═
+  if (phase === 'center') {
+    if (leftTouch) {
+      phase = 'left'; leftCount++;
+      leftCountEl.textContent = leftCount;
+      totalCountEl.textContent = leftCount + rightCount;
+      flashEl(leftCountEl); flashEl(totalCountEl);
+      showFlash('left');
+    } else if (rightTouch) {
+      phase = 'right'; rightCount++;
+      rightCountEl.textContent = rightCount;
+      totalCountEl.textContent = leftCount + rightCount;
+      flashEl(rightCountEl); flashEl(totalCountEl);
+      showFlash('right');
+    }
+  } else if (phase === 'left') {
+    if (atCenter) phase = 'center';
+  } else if (phase === 'right') {
+    if (atCenter) phase = 'center';
+  }
+
+  // ═ 시각화 ═
+  const W = canvasEl.width, H = canvasEl.height;
+
+  // 엉덩이 기준 바닥 라인
+  const floorY = hipMidY * H;
+  ctx.strokeStyle = 'rgba(52,211,153,0.35)';
+  ctx.setLineDash([6, 6]); ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(0, floorY); ctx.lineTo(W, floorY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 좌/우 사이드 존 음영
+  const leftZoneX  = (hipMidX - SIDE_THRESHOLD) * W;
+  const rightZoneX = (hipMidX + SIDE_THRESHOLD) * W;
+  ctx.fillStyle = 'rgba(56,189,248,0.08)';
+  ctx.fillRect(0, 0, leftZoneX, H);
+  ctx.fillStyle = 'rgba(244,114,182,0.08)';
+  ctx.fillRect(rightZoneX, 0, W - rightZoneX, H);
+
+  // 중심선
+  ctx.strokeStyle = 'rgba(236,253,245,0.25)';
+  ctx.setLineDash([4, 6]); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(hipMidX * W, 0); ctx.lineTo(hipMidX * W, H); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 손 중점 (공 위치) — 크게 표시
+  const hx = handMidX * W, hy = handMidY * H;
+  const ballColor = leftTouch ? '#38bdf8' : rightTouch ? '#f472b6' : atFloor ? '#a7f3d0' : '#34d399';
+  ctx.beginPath(); ctx.arc(hx, hy, 16, 0, Math.PI * 2);
+  ctx.strokeStyle = ballColor; ctx.lineWidth = 3; ctx.stroke();
+  ctx.fillStyle = ballColor + '33';
+  ctx.fill();
+  ctx.fillStyle = ballColor;
+  ctx.font = '14px Do Hyeon, sans-serif';
+  ctx.fillText('BALL', hx + 20, hy - 8);
+
+  // 엉덩이 중점
+  const hipX = hipMidX * W, hipY = hipMidY * H;
+  ctx.beginPath(); ctx.arc(hipX, hipY, 6, 0, Math.PI * 2);
+  ctx.fillStyle = '#ecfdf5'; ctx.fill();
+
+  // 발 상태 포인트 (양 발목)
+  const drawAnkle = (ak) => {
+    const x = ak.x * W, y = ak.y * H;
+    ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2);
+    ctx.strokeStyle = feetLifted ? '#00e676' : '#ff1744';
+    ctx.lineWidth = 2; ctx.stroke();
+  };
+  drawAnkle(lm[27]); drawAnkle(lm[28]);
+});
+
+async function startCamera() {
+  cameraStarted = true;
+  try {
+    // 브이싯은 정면 → 전면 카메라(user)가 자연스러움
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user' }
+    }).catch(() => navigator.mediaDevices.getUserMedia({ video: true }));
+    videoEl.srcObject = stream; videoEl.play();
+    const camera = new Camera(videoEl, {
+      onFrame: async () => { await pose.send({ image: videoEl }); },
+      width: 640, height: 480
+    });
+    camera.start();
+    loadingEl.style.display = 'none';
+  } catch (e) {
+    loadingEl.innerHTML = '<div style="color:#ff1744;font-size:15px;text-align:center;padding:20px;font-family:Do Hyeon,sans-serif">카메라 권한이 필요해요<br><small style="color:#6b8e7e;font-size:13px">브라우저 설정에서 카메라를 허용해주세요</small></div>';
+    cameraStarted = false;
+  }
+}
+</script>
+</body>
+</html>
