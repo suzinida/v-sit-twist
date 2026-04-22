@@ -13,15 +13,15 @@
     --bg: #0a1814;
     --surface: #12241e;
     --border: #28473a;
-    --accent: #34d399;      /* emerald */
-    --accent2: #a7f3d0;     /* mint */
+    --accent: #34d399;
+    --accent2: #a7f3d0;
     --text: #ecfdf5;
     --muted: #6b8e7e;
     --good: #22c55e;
     --warn: #fbbf24;
     --bad: #ef4444;
-    --left: #38bdf8;        /* sky blue */
-    --right: #f472b6;       /* pink */
+    --left: #38bdf8;
+    --right: #f472b6;
   }
 
   body {
@@ -255,14 +255,12 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* 우측 상단 사이드 인디케이터 */
   .side-indicator {
     position: absolute; top: 16px; right: 16px;
     background: rgba(10,24,20,0.82); border: 0.5px solid var(--border);
     border-radius: 2px; padding: 6px 14px; font-size: 13px; color: var(--muted); z-index: 4;
   }
 
-  /* 좌측 상단: 브이싯 타이머 */
   .time-panel {
     position: absolute; top: 16px; left: 16px;
     background: rgba(10,24,20,0.82); border: 0.5px solid var(--border);
@@ -275,7 +273,6 @@
   .time-best { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .time-best span { color: var(--accent2); }
 
-  /* 하단 수평 포지션 바 */
   .pos-bar-wrap {
     position: absolute; bottom: 6px; left: 20px; right: 20px;
     height: 6px; z-index: 4; pointer-events: none;
@@ -321,7 +318,7 @@
   <div class="landing-hero">
     <div class="hero-tag">AI 자세 분석</div>
     <div class="hero-title">V-SIT<br><span>TWIST</span><br>CHECKER</div>
-    <div class="hero-tagline">발 든 채 좌·우 바닥 터치마다 +1!</div>
+    <div class="hero-tagline">발 든 채 좌·우 트위스트마다 +1!</div>
 
     <div class="criteria-card">
       <div class="criteria-title">판정 기준</div>
@@ -329,28 +326,28 @@
         <div class="criteria-rule">
           <div class="rule-badge left">LEFT</div>
           <div class="rule-text">
-            <strong>발을 든 상태</strong>에서 공이 <strong>왼쪽 바닥</strong>에 닿음<br>
+            <strong>발을 든 상태</strong>에서 공을 <strong>왼쪽</strong>으로 충분히 이동<br>
             <span style="color:var(--text)">→ 왼쪽 터치 +1</span>
           </div>
         </div>
         <div class="criteria-rule">
           <div class="rule-badge right">RIGHT</div>
           <div class="rule-text">
-            <strong>발을 든 상태</strong>에서 공이 <strong>오른쪽 바닥</strong>에 닿음<br>
+            <strong>발을 든 상태</strong>에서 공을 <strong>오른쪽</strong>으로 충분히 이동<br>
             <span style="color:var(--text)">→ 오른쪽 터치 +1</span>
           </div>
         </div>
         <div class="criteria-rule">
           <div class="rule-badge rep">REP</div>
           <div class="rule-text">
-            <strong>발이 들려있는 상태</strong>에서 공이 <strong>바닥에 닿으면 REP</strong><br>
+            <strong>발이 들려있는 상태</strong>에서 공을 좌우로 이동하면 REP<br>
             <span style="color:var(--text)">→ 좌·우 각 터치 1개씩 카운트</span>
           </div>
         </div>
         <div class="criteria-rule">
           <div class="rule-badge norep">NO REP</div>
           <div class="rule-text">
-            발이 바닥에 닿은 채 터치하거나, 중앙을 지나지 않고 같은 쪽을 또 찍은 경우<br>
+            발이 바닥에 닿은 채 하거나, 중앙을 지나지 않고 같은 쪽을 또 찍은 경우<br>
             <span style="color:var(--text)">→ 카운트되지 않음</span>
           </div>
         </div>
@@ -366,7 +363,7 @@
       <div class="feature-card">
         <div class="feature-num">02</div>
         <div class="feature-title">좌우 자동 카운트</div>
-        <div class="feature-desc">양손 중점을 추적해서 좌·우 터치를 분리해 세요</div>
+        <div class="feature-desc">양손 중점을 추적해서 좌·우 트위스트를 분리해 세요</div>
       </div>
       <div class="feature-card">
         <div class="feature-num">03</div>
@@ -387,7 +384,7 @@
       </div>
       <div class="how-step">
         <div class="how-num">3</div>
-        <div>농구공을 <span style="color:var(--accent)">양손으로 꽉 잡고</span> 좌·우로 몸통을 돌려 바닥을 터치해요</div>
+        <div>농구공을 <span style="color:var(--accent)">양손으로 꽉 잡고</span> 좌·우로 몸통을 돌려주세요</div>
       </div>
       <div class="how-step">
         <div class="how-num">4</div>
@@ -457,12 +454,12 @@
       <div class="stat-card">
         <div class="stat-label">왼쪽</div>
         <div class="stat-value" id="leftCount" style="color:var(--left)">0</div>
-        <div class="stat-sub">왼쪽 바닥 터치</div>
+        <div class="stat-sub">왼쪽 터치</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">오른쪽</div>
         <div class="stat-value" id="rightCount" style="color:var(--right)">0</div>
-        <div class="stat-sub">오른쪽 바닥 터치</div>
+        <div class="stat-sub">오른쪽 터치</div>
       </div>
     </div>
 
@@ -494,21 +491,21 @@ const repFlashEl   = document.getElementById('repFlash');
 const repFlashText = document.getElementById('repFlashText');
 
 // ═════ Tunable thresholds ═════
-const FEET_LIFT_GAP    = 0.030; // ankleY < hipY - this → 발 들림
-const HAND_FLOOR_GAP   = 0.060; // |handMidY - hipMidY| < this → 바닥 근처
-const SIDE_THRESHOLD   = 0.120; // |handMidX - hipMidX| > this → 한쪽으로 충분히 벗어남
-const CENTER_THRESHOLD = 0.060; // |handMidX - hipMidX| < this → 중앙 복귀
-// 포지션 바 디스플레이 스케일 (정규화 X 기준 ±0.25 → 바 양끝)
+// ★★★ 주요 변경: HAND_FLOOR_GAP 조건 제거 ★★★
+// 카메라 각도 때문에 손 Y좌표가 의미 없어짐
+// 대신 발이 들려있고 손이 옆으로 충분히 가면 카운트
+const FEET_LIFT_GAP    = 0.025; // 0.030 → 0.025 (살짝 완화)
+const SIDE_THRESHOLD   = 0.100; // 0.120 → 0.100 (살짝 완화, 여전히 보수적)
+const CENTER_THRESHOLD = 0.050; // 0.060 → 0.050 (살짝 완화)
 const POS_BAR_SCALE    = 0.25;
 
 let leftCount = 0, rightCount = 0;
-let phase = 'center';   // 'center' | 'left' | 'right'
+let phase = 'center';
 let cameraStarted = false;
 let flashTimeout = null;
 
-// V-sit timer
-let vsitStartMs = null;     // 현재 브이싯 시작 시각
-let vsitBestMs  = 0;        // 최고 유지 시간
+let vsitStartMs = null;
+let vsitBestMs  = 0;
 let lastVSitActive = false;
 
 function goToCamera() {
@@ -529,7 +526,7 @@ function fmtMs(ms) {
   return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
 }
 
-function flashEl(el) {
+function flashElFn(el) {
   el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
 }
 
@@ -564,7 +561,6 @@ function resetStats() {
   timeBestEl.textContent = '00:00';
 }
 
-// 정면 감지: 양쪽 엉덩이 x가 서로 떨어져 있고, 어깨도 비슷하게 벌어짐
 function isFacingCamera(lm) {
   const hipSpread = Math.abs(lm[23].x - lm[24].x);
   const shSpread  = Math.abs(lm[11].x - lm[12].x);
@@ -612,18 +608,15 @@ pose.onResults((results) => {
     return;
   }
 
-  // 주요 좌표
   const hipMidX   = (lm[23].x + lm[24].x) / 2;
   const hipMidY   = (lm[23].y + lm[24].y) / 2;
   const handMidX  = (lm[15].x + lm[16].x) / 2;
   const handMidY  = (lm[15].y + lm[16].y) / 2;
   const ankleMidY = (lm[27].y + lm[28].y) / 2;
 
-  // 발 들림 검사
   const feetLifted = ankleMidY < hipMidY - FEET_LIFT_GAP;
   feetStateEl.textContent = feetLifted ? '들림 ✓' : '바닥';
 
-  // 브이싯 타이머
   if (feetLifted) {
     if (vsitStartMs === null) vsitStartMs = now;
     const elapsed = now - vsitStartMs;
@@ -636,7 +629,6 @@ pose.onResults((results) => {
     lastVSitActive = true;
   } else {
     if (lastVSitActive && vsitStartMs !== null) {
-      // 방금 끝남 → 최종 시간 비교
       const elapsed = now - vsitStartMs;
       if (elapsed > vsitBestMs) {
         vsitBestMs = elapsed;
@@ -649,14 +641,9 @@ pose.onResults((results) => {
     lastVSitActive = false;
   }
 
-  // 손 중점 좌표 분석
-  const offsetX   = handMidX - hipMidX;               // (+) → 화면 오른쪽, (-) → 화면 왼쪽
-  const handYGap  = handMidY - hipMidY;               // (+) → 엉덩이보다 아래 = 바닥 근처
-  const atFloor   = Math.abs(handYGap) < HAND_FLOOR_GAP;
-
+  const offsetX   = handMidX - hipMidX;
   handPosEl.textContent = offsetX.toFixed(2);
 
-  // 포지션 바 dot 위치 (퍼센트)
   const clamped = Math.max(-POS_BAR_SCALE, Math.min(POS_BAR_SCALE, offsetX));
   const pctPos  = (clamped + POS_BAR_SCALE) / (POS_BAR_SCALE * 2) * 100;
   posDotEl.style.left = pctPos + '%';
@@ -665,12 +652,11 @@ pose.onResults((results) => {
       offsetX >  SIDE_THRESHOLD ? 'var(--right)' :
       'var(--accent)';
 
-  // ═ 터치 판정 (반드시 feet lifted & atFloor 조건 만족) ═
-  const leftTouch  = feetLifted && atFloor && offsetX < -SIDE_THRESHOLD;
-  const rightTouch = feetLifted && atFloor && offsetX >  SIDE_THRESHOLD;
+  // ★★★ 카운트 조건: 발 들림 + 좌우 이동만 체크 (높이 조건 제거) ★★★
+  const leftTouch  = feetLifted && offsetX < -SIDE_THRESHOLD;
+  const rightTouch = feetLifted && offsetX >  SIDE_THRESHOLD;
   const atCenter   = Math.abs(offsetX) < CENTER_THRESHOLD;
 
-  // 사이드 표시 & 피드백
   if (!feetLifted) {
     statusEl.textContent = '발을 드세요! (브이싯 자세)';
     statusEl.className = 'overlay-status warn';
@@ -678,13 +664,13 @@ pose.onResults((results) => {
     feedbackEl.style.color = 'var(--warn)';
     sideEl.textContent = '발 내려감';
   } else if (leftTouch) {
-    statusEl.textContent = '왼쪽 바닥 터치!';
+    statusEl.textContent = '왼쪽 터치!';
     statusEl.className = 'overlay-status left';
     feedbackEl.textContent = 'LEFT TOUCH!';
     feedbackEl.style.color = 'var(--left)';
     sideEl.textContent = '← 왼쪽 터치';
   } else if (rightTouch) {
-    statusEl.textContent = '오른쪽 바닥 터치!';
+    statusEl.textContent = '오른쪽 터치!';
     statusEl.className = 'overlay-status right';
     feedbackEl.textContent = 'RIGHT TOUCH!';
     feedbackEl.style.color = 'var(--right)';
@@ -703,19 +689,18 @@ pose.onResults((results) => {
     sideEl.textContent = offsetX < 0 ? '← 왼쪽 이동' : '오른쪽 이동 →';
   }
 
-  // ═ State machine: 중앙을 거쳐야 반대편 카운트 허용 ═
   if (phase === 'center') {
     if (leftTouch) {
       phase = 'left'; leftCount++;
       leftCountEl.textContent = leftCount;
       totalCountEl.textContent = leftCount + rightCount;
-      flashEl(leftCountEl); flashEl(totalCountEl);
+      flashElFn(leftCountEl); flashElFn(totalCountEl);
       showFlash('left');
     } else if (rightTouch) {
       phase = 'right'; rightCount++;
       rightCountEl.textContent = rightCount;
       totalCountEl.textContent = leftCount + rightCount;
-      flashEl(rightCountEl); flashEl(totalCountEl);
+      flashElFn(rightCountEl); flashElFn(totalCountEl);
       showFlash('right');
     }
   } else if (phase === 'left') {
@@ -724,17 +709,13 @@ pose.onResults((results) => {
     if (atCenter) phase = 'center';
   }
 
-  // ═ 시각화 ═
   const W = canvasEl.width, H = canvasEl.height;
-
-  // 엉덩이 기준 바닥 라인
   const floorY = hipMidY * H;
   ctx.strokeStyle = 'rgba(52,211,153,0.35)';
   ctx.setLineDash([6, 6]); ctx.lineWidth = 1.2;
   ctx.beginPath(); ctx.moveTo(0, floorY); ctx.lineTo(W, floorY); ctx.stroke();
   ctx.setLineDash([]);
 
-  // 좌/우 사이드 존 음영
   const leftZoneX  = (hipMidX - SIDE_THRESHOLD) * W;
   const rightZoneX = (hipMidX + SIDE_THRESHOLD) * W;
   ctx.fillStyle = 'rgba(56,189,248,0.08)';
@@ -742,15 +723,13 @@ pose.onResults((results) => {
   ctx.fillStyle = 'rgba(244,114,182,0.08)';
   ctx.fillRect(rightZoneX, 0, W - rightZoneX, H);
 
-  // 중심선
   ctx.strokeStyle = 'rgba(236,253,245,0.25)';
   ctx.setLineDash([4, 6]); ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(hipMidX * W, 0); ctx.lineTo(hipMidX * W, H); ctx.stroke();
   ctx.setLineDash([]);
 
-  // 손 중점 (공 위치) — 크게 표시
   const hx = handMidX * W, hy = handMidY * H;
-  const ballColor = leftTouch ? '#38bdf8' : rightTouch ? '#f472b6' : atFloor ? '#a7f3d0' : '#34d399';
+  const ballColor = leftTouch ? '#38bdf8' : rightTouch ? '#f472b6' : '#34d399';
   ctx.beginPath(); ctx.arc(hx, hy, 16, 0, Math.PI * 2);
   ctx.strokeStyle = ballColor; ctx.lineWidth = 3; ctx.stroke();
   ctx.fillStyle = ballColor + '33';
@@ -759,12 +738,10 @@ pose.onResults((results) => {
   ctx.font = '14px Do Hyeon, sans-serif';
   ctx.fillText('BALL', hx + 20, hy - 8);
 
-  // 엉덩이 중점
-  const hipX = hipMidX * W, hipY = hipMidY * H;
-  ctx.beginPath(); ctx.arc(hipX, hipY, 6, 0, Math.PI * 2);
+  const hipX = hipMidX * W, hipY2 = hipMidY * H;
+  ctx.beginPath(); ctx.arc(hipX, hipY2, 6, 0, Math.PI * 2);
   ctx.fillStyle = '#ecfdf5'; ctx.fill();
 
-  // 발 상태 포인트 (양 발목)
   const drawAnkle = (ak) => {
     const x = ak.x * W, y = ak.y * H;
     ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2);
@@ -777,7 +754,6 @@ pose.onResults((results) => {
 async function startCamera() {
   cameraStarted = true;
   try {
-    // 브이싯은 정면 → 전면 카메라(user)가 자연스러움
     const stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'user' }
     }).catch(() => navigator.mediaDevices.getUserMedia({ video: true }));
