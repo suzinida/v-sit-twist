@@ -87,6 +87,7 @@
   .rule-badge.norep { background: var(--bad);  color: #fff; }
   .rule-badge.left  { background: var(--left); color: #001a2e; }
   .rule-badge.right { background: var(--right); color: #2e001a; }
+  .rule-badge.ready { background: var(--warn); color: #1a1200; }
 
   .rule-text { font-size: 15px; color: var(--muted); line-height: 1.8; }
   .rule-text strong { color: var(--text); font-weight: 400; }
@@ -299,10 +300,78 @@
     box-shadow: 0 0 8px rgba(52,211,153,0.7);
   }
 
+  /* ═══ CALIBRATION OVERLAY ═══ */
+  .calibration-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 24, 20, 0.88);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 6;
+    gap: 20px;
+    transition: opacity 0.5s;
+  }
+  .calibration-overlay.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .calib-icon {
+    font-size: 64px;
+    line-height: 1;
+  }
+  .calib-title {
+    font-size: 32px;
+    color: var(--warn);
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+  .calib-title.ready { color: var(--good); }
+  .calib-subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    text-align: center;
+    max-width: 80%;
+    line-height: 1.6;
+  }
+  .calib-progress {
+    width: 80%;
+    max-width: 400px;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .calib-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--warn);
+    transition: width 0.1s linear, background 0.3s;
+  }
+  .calib-progress-fill.ready { background: var(--good); }
+  .calib-check {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .calib-check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .calib-check-item.ok { color: var(--good); }
+  .calib-check-item.fail { color: var(--bad); }
+
   @media (max-width: 400px) {
     .stat-value { font-size: 44px; }
     .stat-label { font-size: 13px; }
     .time-value { font-size: 22px; }
+    .calib-title { font-size: 24px; }
+    .calib-subtitle { font-size: 13px; }
   }
 </style>
 </head>
@@ -318,36 +387,36 @@
   <div class="landing-hero">
     <div class="hero-tag">AI 자세 분석</div>
     <div class="hero-title">V-SIT<br><span>TWIST</span><br>CHECKER</div>
-    <div class="hero-tagline">발 든 채 좌·우 트위스트마다 +1!</div>
+    <div class="hero-tagline">브이싯 자세 확인 후 좌우 트위스트 카운트!</div>
 
     <div class="criteria-card">
       <div class="criteria-title">판정 기준</div>
       <div class="criteria-rules">
         <div class="criteria-rule">
+          <div class="rule-badge ready">READY</div>
+          <div class="rule-text">
+            <strong>V-sit 자세</strong>를 2초간 유지하면 자동으로 준비 완료<br>
+            <span style="color:var(--text)">→ 이때부터 카운트 시작</span>
+          </div>
+        </div>
+        <div class="criteria-rule">
           <div class="rule-badge left">LEFT</div>
           <div class="rule-text">
-            <strong>발을 든 상태</strong>에서 공을 <strong>왼쪽</strong>으로 충분히 이동<br>
+            발을 든 상태에서 공을 <strong>왼쪽</strong>으로 충분히 이동<br>
             <span style="color:var(--text)">→ 왼쪽 터치 +1</span>
           </div>
         </div>
         <div class="criteria-rule">
           <div class="rule-badge right">RIGHT</div>
           <div class="rule-text">
-            <strong>발을 든 상태</strong>에서 공을 <strong>오른쪽</strong>으로 충분히 이동<br>
+            발을 든 상태에서 공을 <strong>오른쪽</strong>으로 충분히 이동<br>
             <span style="color:var(--text)">→ 오른쪽 터치 +1</span>
-          </div>
-        </div>
-        <div class="criteria-rule">
-          <div class="rule-badge rep">REP</div>
-          <div class="rule-text">
-            <strong>발이 들려있는 상태</strong>에서 공을 좌우로 이동하면 REP<br>
-            <span style="color:var(--text)">→ 좌·우 각 터치 1개씩 카운트</span>
           </div>
         </div>
         <div class="criteria-rule">
           <div class="rule-badge norep">NO REP</div>
           <div class="rule-text">
-            발이 바닥에 닿은 채 하거나, 중앙을 지나지 않고 같은 쪽을 또 찍은 경우<br>
+            V-sit이 풀리거나, 중앙을 지나지 않고 같은 쪽을 또 찍은 경우<br>
             <span style="color:var(--text)">→ 카운트되지 않음</span>
           </div>
         </div>
@@ -357,8 +426,8 @@
     <div class="feature-grid">
       <div class="feature-card">
         <div class="feature-num">01</div>
-        <div class="feature-title">발 들림 감지</div>
-        <div class="feature-desc">엉덩이보다 발이 위에 있어야 브이싯 인정해요</div>
+        <div class="feature-title">자동 준비 감지</div>
+        <div class="feature-desc">V-sit 자세를 2초 유지하면 자동으로 시작</div>
       </div>
       <div class="feature-card">
         <div class="feature-num">02</div>
@@ -380,11 +449,11 @@
       </div>
       <div class="how-step">
         <div class="how-num">2</div>
-        <div>카메라가 <span style="color:var(--accent)">정면에서</span> 몸을 비추도록 두고 브이싯 자세를 잡아주세요</div>
+        <div>카메라가 <span style="color:var(--accent)">정면에서</span> 몸을 비추도록 두고 <span style="color:var(--warn)">V-sit 자세를 2초간 유지</span>해주세요</div>
       </div>
       <div class="how-step">
         <div class="how-num">3</div>
-        <div>농구공을 <span style="color:var(--accent)">양손으로 꽉 잡고</span> 좌·우로 몸통을 돌려주세요</div>
+        <div><span style="color:var(--good)">"준비 완료"</span> 메시지가 뜨면 농구공을 양손으로 잡고 좌·우 트위스트 시작</div>
       </div>
       <div class="how-step">
         <div class="how-num">4</div>
@@ -415,6 +484,25 @@
       <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <div class="loading-text">AI 모델 로딩 중...</div>
+      </div>
+
+      <!-- ═══ CALIBRATION OVERLAY ═══ -->
+      <div class="calibration-overlay" id="calibrationOverlay">
+        <div class="calib-icon" id="calibIcon">🧘</div>
+        <div class="calib-title" id="calibTitle">V-sit 자세를 취해주세요</div>
+        <div class="calib-subtitle" id="calibSubtitle">
+          발을 들고 공을 중앙에 두세요<br>
+          2초간 유지하면 자동으로 시작됩니다
+        </div>
+        <div class="calib-progress">
+          <div class="calib-progress-fill" id="calibProgress"></div>
+        </div>
+        <div class="calib-check" id="calibCheck">
+          <div class="calib-check-item" id="check_person">⚪ 사람 감지</div>
+          <div class="calib-check-item" id="check_facing">⚪ 정면 자세</div>
+          <div class="calib-check-item" id="check_feet">⚪ 발 들림</div>
+          <div class="calib-check-item" id="check_center">⚪ 공 중앙</div>
+        </div>
       </div>
 
       <div class="overlay-status" id="statusLabel">카메라 시작 중...</div>
@@ -463,7 +551,7 @@
       </div>
     </div>
 
-    <button class="btn" onclick="resetStats()">횟수 초기화</button>
+    <button class="btn" onclick="resetStats()">횟수 초기화 / 재측정</button>
   </div>
 </div>
 
@@ -490,20 +578,34 @@ const posDotEl     = document.getElementById('posDot');
 const repFlashEl   = document.getElementById('repFlash');
 const repFlashText = document.getElementById('repFlashText');
 
+// Calibration UI elements
+const calibOverlay  = document.getElementById('calibrationOverlay');
+const calibIcon     = document.getElementById('calibIcon');
+const calibTitle    = document.getElementById('calibTitle');
+const calibSubtitle = document.getElementById('calibSubtitle');
+const calibProgress = document.getElementById('calibProgress');
+const check_person  = document.getElementById('check_person');
+const check_facing  = document.getElementById('check_facing');
+const check_feet    = document.getElementById('check_feet');
+const check_center  = document.getElementById('check_center');
+
 // ═════ Tunable thresholds ═════
-// ★★★ 주요 변경: HAND_FLOOR_GAP 조건 제거 ★★★
-// 카메라 각도 때문에 손 Y좌표가 의미 없어짐
-// 대신 발이 들려있고 손이 옆으로 충분히 가면 카운트
-const FEET_LIFT_GAP    = 0.025; // 0.030 → 0.025 (살짝 완화)
-const SIDE_THRESHOLD   = 0.100; // 0.120 → 0.100 (살짝 완화, 여전히 보수적)
-const CENTER_THRESHOLD = 0.050; // 0.060 → 0.050 (살짝 완화)
+const FEET_LIFT_GAP    = 0.025;
+const SIDE_THRESHOLD   = 0.100;
+const CENTER_THRESHOLD = 0.060;  // 캘리브레이션 시 공 중앙 판정
 const POS_BAR_SCALE    = 0.25;
+const CALIBRATION_TIME = 2000;   // 2초간 V-sit 유지하면 Ready
 
 let leftCount = 0, rightCount = 0;
 let phase = 'center';
 let cameraStarted = false;
 let flashTimeout = null;
 
+// ═ Calibration state ═
+let state = 'WAITING';           // 'WAITING' | 'READY'
+let calibStartMs = null;         // V-sit 자세 유지 시작 시각
+
+// V-sit timer (only active in READY state)
 let vsitStartMs = null;
 let vsitBestMs  = 0;
 let lastVSitActive = false;
@@ -540,10 +642,6 @@ function showFlash(type) {
     repFlashEl.style.background = 'rgba(244,114,182,0.22)';
     repFlashText.textContent = 'RIGHT +1';
     repFlashText.style.color = '#f472b6';
-  } else {
-    repFlashEl.style.background = 'rgba(255,23,68,0.22)';
-    repFlashText.textContent = 'NO REP';
-    repFlashText.style.color = '#ff1744';
   }
   repFlashEl.classList.add('show');
   flashTimeout = setTimeout(() => repFlashEl.classList.remove('show'), 700);
@@ -559,6 +657,38 @@ function resetStats() {
   vsitBestMs = 0;
   timeValueEl.textContent = '00:00';
   timeBestEl.textContent = '00:00';
+  // Re-enter calibration mode
+  state = 'WAITING';
+  calibStartMs = null;
+  showCalibration();
+}
+
+function showCalibration() {
+  calibOverlay.classList.remove('hide');
+  calibIcon.textContent = '🧘';
+  calibTitle.textContent = 'V-sit 자세를 취해주세요';
+  calibTitle.classList.remove('ready');
+  calibSubtitle.innerHTML = '발을 들고 공을 중앙에 두세요<br>2초간 유지하면 자동으로 시작됩니다';
+  calibProgress.style.width = '0%';
+  calibProgress.classList.remove('ready');
+}
+
+function hideCalibration() {
+  calibIcon.textContent = '✅';
+  calibTitle.textContent = '준비 완료! 시작하세요';
+  calibTitle.classList.add('ready');
+  calibSubtitle.innerHTML = '좌우로 트위스트 시작!';
+  calibProgress.classList.add('ready');
+  calibProgress.style.width = '100%';
+  setTimeout(() => {
+    calibOverlay.classList.add('hide');
+  }, 800);
+}
+
+function updateCheck(el, ok) {
+  el.className = 'calib-check-item ' + (ok ? 'ok' : 'fail');
+  const label = el.textContent.substring(2); // remove circle
+  el.textContent = (ok ? '✅ ' : '❌ ') + label;
 }
 
 function isFacingCamera(lm) {
@@ -581,6 +711,7 @@ pose.onResults((results) => {
 
   const now = performance.now();
 
+  // No person detected
   if (!results.poseLandmarks) {
     statusEl.textContent = '사람을 찾는 중...';
     statusEl.className = 'overlay-status';
@@ -588,6 +719,19 @@ pose.onResults((results) => {
     feedbackEl.style.color = 'var(--muted)';
     vsitStartMs = null;
     lastVSitActive = false;
+
+    if (state === 'WAITING') {
+      updateCheck(check_person, false);
+      updateCheck(check_facing, false);
+      updateCheck(check_feet, false);
+      updateCheck(check_center, false);
+      calibStartMs = null;
+      calibProgress.style.width = '0%';
+    } else {
+      // Lost person during counting - go back to calibration
+      state = 'WAITING';
+      showCalibration();
+    }
     return;
   }
 
@@ -595,19 +739,9 @@ pose.onResults((results) => {
   drawConnectors(ctx, lm, POSE_CONNECTIONS, { color: '#28473a', lineWidth: 1.5 });
   drawLandmarks(ctx, lm, { color: '#34d399', lineWidth: 1, radius: 3 });
 
-  if (!isFacingCamera(lm)) {
-    statusEl.textContent = '정면으로 앉아주세요';
-    statusEl.className = 'overlay-status';
-    feedbackEl.textContent = '준비';
-    feedbackEl.style.color = 'var(--muted)';
-    sideEl.textContent = '정면 감지 중';
-    handPosEl.textContent = '—';
-    feetStateEl.textContent = '—';
-    vsitStartMs = null;
-    lastVSitActive = false;
-    return;
-  }
+  const facingOk = isFacingCamera(lm);
 
+  // Key coordinates
   const hipMidX   = (lm[23].x + lm[24].x) / 2;
   const hipMidY   = (lm[23].y + lm[24].y) / 2;
   const handMidX  = (lm[15].x + lm[16].x) / 2;
@@ -615,8 +749,67 @@ pose.onResults((results) => {
   const ankleMidY = (lm[27].y + lm[28].y) / 2;
 
   const feetLifted = ankleMidY < hipMidY - FEET_LIFT_GAP;
-  feetStateEl.textContent = feetLifted ? '들림 ✓' : '바닥';
+  const offsetX    = handMidX - hipMidX;
+  const atCenter   = Math.abs(offsetX) < CENTER_THRESHOLD;
 
+  feetStateEl.textContent = feetLifted ? '들림 ✓' : '바닥';
+  handPosEl.textContent = offsetX.toFixed(2);
+
+  // Position bar dot
+  const clamped = Math.max(-POS_BAR_SCALE, Math.min(POS_BAR_SCALE, offsetX));
+  const pctPos  = (clamped + POS_BAR_SCALE) / (POS_BAR_SCALE * 2) * 100;
+  posDotEl.style.left = pctPos + '%';
+
+  // ═════════════════════════════════
+  // ═══ CALIBRATION STATE (WAITING) ═══
+  // ═════════════════════════════════
+  if (state === 'WAITING') {
+    // Update checks
+    updateCheck(check_person, true);
+    updateCheck(check_facing, facingOk);
+    updateCheck(check_feet, feetLifted);
+    updateCheck(check_center, atCenter);
+
+    // All conditions met?
+    const allOk = facingOk && feetLifted && atCenter;
+
+    if (allOk) {
+      if (calibStartMs === null) {
+        calibStartMs = now;
+      }
+      const elapsed = now - calibStartMs;
+      const pct = Math.min(100, (elapsed / CALIBRATION_TIME) * 100);
+      calibProgress.style.width = pct + '%';
+
+      if (elapsed >= CALIBRATION_TIME) {
+        // Transition to READY
+        state = 'READY';
+        hideCalibration();
+        // Reset count tracking
+        phase = 'center';
+        vsitStartMs = now;
+      }
+    } else {
+      calibStartMs = null;
+      calibProgress.style.width = '0%';
+    }
+
+    // Status display in background
+    statusEl.textContent = 'V-sit 자세를 취해주세요';
+    statusEl.className = 'overlay-status warn';
+    feedbackEl.textContent = 'WAITING';
+    feedbackEl.style.color = 'var(--warn)';
+    sideEl.textContent = '준비 중';
+
+    // Don't count in WAITING state
+    return;
+  }
+
+  // ═════════════════════════════════
+  // ═══ READY STATE (COUNTING) ══════
+  // ═════════════════════════════════
+
+  // V-sit timer
   if (feetLifted) {
     if (vsitStartMs === null) vsitStartMs = now;
     const elapsed = now - vsitStartMs;
@@ -639,26 +832,24 @@ pose.onResults((results) => {
     timeValueEl.textContent = '00:00';
     timeValueEl.classList.remove('live');
     lastVSitActive = false;
+
+    // If feet are down for too long, go back to calibration
+    // (실수로 발이 내려가도 바로 초기화되진 않게 살짝 여유)
   }
 
-  const offsetX   = handMidX - hipMidX;
-  handPosEl.textContent = offsetX.toFixed(2);
-
-  const clamped = Math.max(-POS_BAR_SCALE, Math.min(POS_BAR_SCALE, offsetX));
-  const pctPos  = (clamped + POS_BAR_SCALE) / (POS_BAR_SCALE * 2) * 100;
-  posDotEl.style.left = pctPos + '%';
+  // Position bar color
   posDotEl.style.background =
       offsetX < -SIDE_THRESHOLD ? 'var(--left)' :
       offsetX >  SIDE_THRESHOLD ? 'var(--right)' :
       'var(--accent)';
 
-  // ★★★ 카운트 조건: 발 들림 + 좌우 이동만 체크 (높이 조건 제거) ★★★
+  // Touch judgment
   const leftTouch  = feetLifted && offsetX < -SIDE_THRESHOLD;
   const rightTouch = feetLifted && offsetX >  SIDE_THRESHOLD;
-  const atCenter   = Math.abs(offsetX) < CENTER_THRESHOLD;
 
+  // Status feedback
   if (!feetLifted) {
-    statusEl.textContent = '발을 드세요! (브이싯 자세)';
+    statusEl.textContent = '발을 드세요!';
     statusEl.className = 'overlay-status warn';
     feedbackEl.textContent = 'LIFT FEET';
     feedbackEl.style.color = 'var(--warn)';
@@ -676,7 +867,7 @@ pose.onResults((results) => {
     feedbackEl.style.color = 'var(--right)';
     sideEl.textContent = '오른쪽 터치 →';
   } else if (atCenter) {
-    statusEl.textContent = '중앙 — 다음 방향으로 이동하세요';
+    statusEl.textContent = '중앙 — 다음 방향으로';
     statusEl.className = 'overlay-status';
     feedbackEl.textContent = 'CENTER';
     feedbackEl.style.color = 'var(--text)';
@@ -689,6 +880,7 @@ pose.onResults((results) => {
     sideEl.textContent = offsetX < 0 ? '← 왼쪽 이동' : '오른쪽 이동 →';
   }
 
+  // State machine for counting
   if (phase === 'center') {
     if (leftTouch) {
       phase = 'left'; leftCount++;
@@ -709,6 +901,7 @@ pose.onResults((results) => {
     if (atCenter) phase = 'center';
   }
 
+  // Visualization
   const W = canvasEl.width, H = canvasEl.height;
   const floorY = hipMidY * H;
   ctx.strokeStyle = 'rgba(52,211,153,0.35)';
